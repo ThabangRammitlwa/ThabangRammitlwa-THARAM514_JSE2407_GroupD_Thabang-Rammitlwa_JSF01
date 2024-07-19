@@ -3,61 +3,149 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SwiftCart</title>
+    <title>Alpine.js E-commerce Store</title>
     <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-400">
-    <header x-data="header()" class="bg-gray-200 shadow-mb-4">
-    <div x-data="store()" class="container mx-auto px-4 py-8">
-        <h1 class="text-3xl font-bold mb-8">SwiftCart</h1>
+<body class="bg-gray-100">
+    
+        <header x-data="header()" class="bg-gray-200 shadow-md mb-8">
+            <div class="container mx-auto px-4 py-4">
+                <div class="flex items-center justify-between">
+                    <!-- Logo -->
+                    <div class="text-2xl font-bold text-blue-400">
+                        <a href="#">SwiftCart</a>
+                    </div>
+
+                 <!-- Search Bar -->
+                 <div class="hidden md:block">
+                    <input 
+                        type="text" 
+                        placeholder="Search products..." 
+                        class="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        @keyup.enter="search"
+                        x-model="searchQuery"
+                    >
+                </div>
+
+                  <!-- Cart Icon -->
+                  <div class="relative hidden lg:block">
+                    <button @click="toggleCart" class="text-gray-600 hover:text-blue-600">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                        </svg>
+                    </button>
+                    <span 
+                        x-show="$store.cart.length > 0" 
+                        x-text="$store.cart.length"
+                        class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
+                    ></span>
+                </div>
+                
+                     <!-- Navigation -->
+                     <nav class="hidden md:flex space-x-4">
+                        <a href="#" class="text-gray-600 hover:text-blue-600">wishlist</a>
+                        <a href="#" class="text-gray-600 hover:text-blue-600">Login</a>
+                    </nav>
+
+                   <!-- Mobile menu button -->
+                   <div class="md:hidden">
+                    <button @click="toggleMobileMenu" class="text-gray-600 hover:text-blue-600">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+              <!-- Mobile menu -->
+              <div x-show="mobileMenuOpen" class="md:hidden mt-4">
+                <a href="#" class="block py-2 text-gray-600 hover:text-blue-600">Whishlist</a>
+                <a href="#" class="block py-2 text-gray-600 hover:text-blue-600">Login</a>
+                <a href="#" class="block py-2 text-gray-600 hover:text-blue-600">Cart</a>
+                
+                <input 
+                    type="text" 
+                    placeholder="Search products..." 
+                    class="mt-2 w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    @keyup.enter="search"
+                    x-model="searchQuery"
+                >
+            </div>
+        </div>
+
+         </header>
+    <div x-data="store()" x-init="fetchProducts()" class="container mx-auto px-4 py-8">
 
         <div class="mb-4 flex space-x-4">
-           <select x-model="selectedCategory" class="p-2 border rounded">
-            <option value="">All Categories</option>
-            <template x-for="category in Categories" :key="category">
-                <option :value="category" x-text="category"></option> 
-            </template>
-           </select>
-           <select x-model="sortOption" class="p2 border rounded">
-            <option value="">sort by</option>
-            <option value="lowest"> Lowest price</option>
-            <option value="highest"> Highest price</option>
-           </select>
-           <input x-model="search" type="text" placeholder="Search" class="p-
-           2 border rounded">
-           <button x-on:click="search = ''" class="p-2 border rounded"></button>
+            <select x-model="selectedCategory" class="p-2 border rounded">
+                <option value="">All Categories</option>
+                <template x-for="category in categories" :key="category">
+                    <option :value="category" x-text="category"></option>
+                </template>
+            </select>
+            <select x-model="sortOption" class="p-2 border rounded">
+                <option value="">Sort by</option>
+                <option value="lowest">Lowest Price</option>
+                <option value="highest">Highest Price</option>
+            </select>
+            <button @click="resetFilters" class="px-4 py-2 bg-blue-500 text-white rounded">Reset</button>
         </div>
-    </div>
-</header>
-    <div x-show="loading" class="text-center py-8">Loading...</div>
-    <template x-for="product in filteredAndSortedProducts" :key="product.id">
-        <div @click="openModal(product.id)" class="bg-white p-4 rounded shadow cursor-pointer">
-            <img :src="product.image" :alt="product.title" class="w-full h-48 object-contain mb-4">
-            <h2 x-text="product.title" class="text-lg font-semibold mb-2"></h2>
-            <p x-text="`$${product.price.toFixed(2)}`" class="text-green-600 font-bold"></p>
-            <p x-text="product.category" class="text-sm text-gray-600"></p>
-        </div>
-    </template>
-</div>
-<div x-show="selectedProduct" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-    <div class="bg-white p-8 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-        <div x-show="modalLoading" class="text-center py-8">Loading...</div>
-        <div x-show="!modalLoading">
-            <h2 x-text="selectedProduct.title" class="text-2xl font-bold mb-4"></h2>
-            <img :src="selectedProduct.image" :alt="selectedProduct.title" class="w-full h-64 object-contain mb-4">
-            <p x-text="selectedProduct.description" class="mb-4"></p>
-            <p x-text="`Price: $${selectedProduct.price.toFixed(2)}`" class="text-green-600 font-bold mb-2"></p>
-            <p x-text="`Category: ${selectedProduct.category}`" class="mb-2"></p>
-            <p x-text="`Rating: ${selectedProduct.rating.rate} (${selectedProduct.rating.count} reviews)`" class="mb-4"></p>
-            <button @click="closeModal" class="px-4 py-2 bg-red-500 text-white rounded">Close</button>
-        </div>
-    </div>
-</div>
-</div>
+   
+        <div x-show="loading" class="text-center py-8">Loading...</div>
 
-<script>
-     function store() {
+        <div x-show="!loading" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <template x-for="product in filteredAndSortedProducts" :key="product.id">
+                <div class="bg-white p-4 rounded shadow">
+                    <img @click="openModal(product.id)" :src="product.image" :alt="product.title" class="w-full h-48 object-contain mb-4 cursor-pointer">
+                    <h2 x-text="product.title" class="text-lg font-semibold mb-2"></h2>
+                    <p x-text="`$${product.price.toFixed(2)}`" class="text-green-600 font-bold"></p>
+                    <p x-text="product.category" class="text-sm text-gray-600 mb-2"></p>
+                    <button @click="addToCart(product)" class="w-full px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Add to Cart</button>
+                </div>
+            </template>
+        </div>
+
+        <div x-show="selectedProduct" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+            <div class="bg-white p-8 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+                <div x-show="modalLoading" class="text-center py-8">Loading...</div>
+                <div x-show="!modalLoading">
+                    <h2 x-text="selectedProduct.title" class="text-2xl font-bold mb-4"></h2>
+                    <img :src="selectedProduct.image" :alt="selectedProduct.title" class="w-full h-64 object-contain mb-4">
+                    <p x-text="selectedProduct.description" class="mb-4"></p>
+                    <p x-text="`Price: $${selectedProduct.price.toFixed(2)}`" class="text-green-600 font-bold mb-2"></p>
+                    <p x-text="`Category: ${selectedProduct.category}`" class="mb-2"></p>
+                    <p x-text="`Rating: ${selectedProduct.rating.rate} (${selectedProduct.rating.count} reviews)`" class="mb-4"></p>
+                    <button @click="addToCart(selectedProduct)" class="px-4 py-2 bg-blue-500 text-white rounded mr-2">Add to Cart</button>
+                    <button @click="closeModal" class="px-4 py-2 bg-red-500 text-white rounded">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+  function header() {
+            return {
+                mobileMenuOpen: false,
+                searchQuery: '',
+
+                toggleMobileMenu() {
+                    this.mobileMenuOpen = !this.mobileMenuOpen;
+                },
+
+                search() {
+                    // Implement your search logic here
+                    console.log('Searching for:', this.searchQuery);
+                },
+
+                toggleCart() {
+                    // Implement your cart toggle logic here
+                    console.log('Toggling cart');
+                }
+            }
+        }
+
+        function store() {
             return {
                 products: [],
                 categories: [],
@@ -117,8 +205,16 @@
                     return filteredProducts;
                 }
             }
-        }   
-</script>
+        }
 
+        document.addEventListener('alpine:init', () => {
+            Alpine.store('cart', {
+                items: [],
+                get length() {
+                    return this.items.length;
+                }
+            })
+        })
+    </script>
 </body>
 </html>
