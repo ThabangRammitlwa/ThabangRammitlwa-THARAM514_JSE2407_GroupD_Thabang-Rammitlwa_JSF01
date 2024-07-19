@@ -30,6 +30,31 @@
         </div>
     </div>
 </header>
+    <div x-show="loading" class="text-center py-8">Loading...</div>
+    <template x-for="product in filteredAndSortedProducts" :key="product.id">
+        <div @click="openModal(product.id)" class="bg-white p-4 rounded shadow cursor-pointer">
+            <img :src="product.image" :alt="product.title" class="w-full h-48 object-contain mb-4">
+            <h2 x-text="product.title" class="text-lg font-semibold mb-2"></h2>
+            <p x-text="`$${product.price.toFixed(2)}`" class="text-green-600 font-bold"></p>
+            <p x-text="product.category" class="text-sm text-gray-600"></p>
+        </div>
+    </template>
+</div>
+<div x-show="selectedProduct" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+    <div class="bg-white p-8 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <div x-show="modalLoading" class="text-center py-8">Loading...</div>
+        <div x-show="!modalLoading">
+            <h2 x-text="selectedProduct.title" class="text-2xl font-bold mb-4"></h2>
+            <img :src="selectedProduct.image" :alt="selectedProduct.title" class="w-full h-64 object-contain mb-4">
+            <p x-text="selectedProduct.description" class="mb-4"></p>
+            <p x-text="`Price: $${selectedProduct.price.toFixed(2)}`" class="text-green-600 font-bold mb-2"></p>
+            <p x-text="`Category: ${selectedProduct.category}`" class="mb-2"></p>
+            <p x-text="`Rating: ${selectedProduct.rating.rate} (${selectedProduct.rating.count} reviews)`" class="mb-4"></p>
+            <button @click="closeModal" class="px-4 py-2 bg-red-500 text-white rounded">Close</button>
+        </div>
+    </div>
+</div>
+</div>
 
 </body>
 </html>
