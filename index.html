@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SwiftCart</title>
+    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-400">
+    <header x-data="header()" class="bg-gray-200 shadow-mb-4">
+    <div x-data="store()" class="container mx-auto px-4 py-8">
+        <h1 class="text-3xl font-bold mb-8">SwiftCart</h1>
+
+        <div class="mb-4 flex space-x-4">
+           <select x-model="selectedCategory" class="p-2 border rounded">
+            <option value="">All Categories</option>
+            <template x-for="category in Categories" :key="category">
+                <option :value="category" x-text="category"></option> 
+            </template>
+           </select>
+           <select x-model="sortOption" class="p2 border rounded">
+            <option value="">sort by</option>
+            <option value="lowest"> Lowest price</option>
+            <option value="highest"> Highest price</option>
+           </select>
+           <input x-model="search" type="text" placeholder="Search" class="p-
+           2 border rounded">
+           <button x-on:click="search = ''" class="p-2 border rounded"></button>
+        </div>
+    </div>
+</header>
+
+</body>
+</html>
