@@ -171,24 +171,7 @@
                     this.selectedProduct = null;
                 },
 
-                resetFilters() {
-                    this.selectedCategory = '';
-                    this.sortOption = '';
-                },
-
-                get filteredAndSortedProducts() {
-                    let filteredProducts = this.selectedCategory
-                        ? this.products.filter(p => p.category === this.selectedCategory)
-                        : this.products;
-
-                    if (this.sortOption === 'lowest') {
-                        return filteredProducts.sort((a, b) => a.price - b.price);
-                    } else if (this.sortOption === 'highest') {
-                        return filteredProducts.sort((a, b) => b.price - a.price);
-                    }
-
-                    return filteredProducts;
-                },
+              
                 addToCart(product) {
     Alpine.store('cart').addItem(product);
 }
