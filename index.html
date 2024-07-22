@@ -8,8 +8,16 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100">
+    <div x-data="mainStore()" x-init="init">
+        <header x-data="headerComponent()"></header>
+        <main class="container mx-auto px-4 py-8">
+            <div x-data="productListComponent()"></div>
+            <div x-data="productModalComponent()"></div>
+        </main>
+        <div x-data="cartComponent()"></div>
+    </div>
     
-        <header x-data="header()" class="bg-gray-700 shadow-md mb-8">
+        <header class="bg-gray-700 shadow-md mb-8">
             <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
                 <!--Logo-->
                 <div class="flex items-center">
@@ -76,8 +84,6 @@
         </div>
 
          </header>
-    <div x-data="store()" x-init="fetchProducts()" class="container mx-auto px-4 py-8">
-
         <div class="mb-4 flex space-x-4">
             <select x-model="selectedCategory" class="p-2 border rounded">
                 <option value="">All Categories</option>
@@ -93,7 +99,7 @@
             <button @click="resetFilters" class="px-4 py-2 bg-blue-500 text-white rounded">Reset</button>
         </div>
    
-        <div x-show="loading" class="text-center py-8">Loading...</div>
+        <div x-show="$ store.loading" class="text-center py-8">Loading...</div>
 
         <div x-show="!loading" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             <template x-for="product in filteredAndSortedProducts" :key="product.id">
@@ -119,42 +125,17 @@
                     <h2 x-text="selectedProduct.title" class="text-2xl font-bold mb-4"></h2>
                     <img :src="selectedProduct.image" :alt="selectedProduct.title" class="w-full h-64 object-contain mb-4">
                     <p x-text="selectedProduct.description" class="mb-4"></p>
-                    <p x-text="`Price: $${selectedProduct.price.toFixed(2)}`" class="text-green-600 font-bold mb-2"></p>
+                    <p x-text="`Price: $R{selectedProduct.price.toFixed(2)}`" class="text-green-600 font-bold mb-2"></p>
                     <p x-text="`Category: ${selectedProduct.category}`" class="mb-2"></p>
                     <p x-text="`Rating: ${selectedProduct.rating.rate} (${selectedProduct.rating.count} reviews)`" class="mb-4"></p>
-                    <button @click="addToCart(selectedProduct)" class="px-4 py-2 bg-blue-500 text-white rounded mr-2">Add to Cart</button>
+                    <button @click="$store.cart.addItem(selectedProduct)" class="px-4 py-2 bg-blue-500 text-white rounded mr-2">Add to Cart</button>
                     <button @click="closeModal" class="px-4 py-2 bg-red-500 text-white rounded">Close</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <script>
-       
 
-        document.addEventListener('alpine:init', () => {
-            Alpine.store('cart', {
-    items: [],
-    addItem(product) {
-        const existingItem = this.items.find(item => item.id === product.id);
-        if (existingItem) {
-            existingItem.quantity += 1;
-        } else {
-            this.items.push({ ...product, quantity: 1 });
-        }
-    },
-    removeItem(productId) {
-        this.items = this.items.filter(item => item.id !== productId);
-    },
-    get length() {
-        return this.items.reduce((total, item) => total + item.quantity, 0);
-    },
-    get total() {
-        return this.items.reduce((total, item) => total + item.price * item.quantity, 0).toFixed(2);
-    }
-})
-});
-    </script>
 
 <div x-data="{ cartOpen: false }" class="relative z-50">
     <div x-show="cartOpen" class="fixed inset-0 bg-black bg-opacity-50"></div>
