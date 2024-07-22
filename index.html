@@ -141,16 +141,16 @@
                 mobileMenuOpen: false,
                 searchQuery: '',
 
-                toggleMobileMenu() {
+                toggleMobileMenu() {/* */arguments
                     this.mobileMenuOpen = !this.mobileMenuOpen;
                 },
 
-                search() {
+                search() {/* */arguments
                     
                     console.log('Searching for:', this.searchQuery);
                 },
 
-                toggleCart() {
+                toggleCart() {/* */arguments
                     
                     console.log('Toggling cart');
                 }
@@ -167,7 +167,7 @@
                 selectedCategory: '',
                 sortOption: '',
 
-                async init() {
+                async init() {/* */arguments
                     try {
                         const [productsResponse, categoriesResponse] = await Promise.all([
                             fetch('https://fakestoreapi.com/products'),
@@ -182,7 +182,7 @@
                     }
                 },
 
-                async openModal(productId) {
+                async openModal(productId) {/* */arguments
                     this.modalLoading = true;
                     this.selectedProduct ={};
                     try {
@@ -198,16 +198,16 @@
                     }
                 },
 
-                closeModal() {
+                closeModal() {/* */arguments
                     this.selectedProduct = null;
                 },
 
-                resetFilters() {
+                resetFilters() {/* */arguments
                     this.selectedCategory = '';
                     this.sortOption = '';
                 },
 
-                get filteredAndSortedProducts() {
+                get filteredAndSortedProducts() {/* */arguments
                     let filteredProducts = this.selectedCategory
                         ? this.products.filter(p => p.category === this.selectedCategory)
                         : this.products;
@@ -220,7 +220,7 @@
 
                     return filteredProducts;
                 },
-                addToCart(product) {
+                addToCart(product) {/* */arguments
     Alpine.store('cart').addItem(product);
 }
             }
@@ -229,7 +229,7 @@
         document.addEventListener('alpine:init', () => {
             Alpine.store('cart', {
     items: [],
-    addItem(product) {
+    addItem(product) {/* */arguments
         const existingItem = this.items.find(item => item.id === product.id);
         if (existingItem) {
             existingItem.quantity += 1;
@@ -240,10 +240,10 @@
     removeItem(productId) {
         this.items = this.items.filter(item => item.id !== productId);
     },
-    get length() {
+    get length() {/*...*/arguments
         return this.items.reduce((total, item) => total + item.quantity, 0);
     },
-    get total() {
+    get total() {/*...*/arguments
         return this.items.reduce((total, item) => total + item.price * item.quantity, 0).toFixed(2);
     }
 })
