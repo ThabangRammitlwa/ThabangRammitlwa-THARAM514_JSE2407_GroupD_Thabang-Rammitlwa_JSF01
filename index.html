@@ -127,7 +127,7 @@
                     <p x-text="selectedProduct.description" class="mb-4"></p>
                     <p x-text="`Price: $${selectedProduct.price.toFixed(2)}`" class="text-green-600 font-bold mb-2"></p>
                     <p x-text="`Category: ${selectedProduct.category}`" class="mb-2"></p>
-                    <p x-text="`Rating: ${selectedProduct.rating.rate} (${selectedProduct.rating.count} reviews)`" class="mb-4"></p>
+                    <p x-text="`Rating: ${selectedProduct.rating.rate} (${selectedProduct.rating.count} reviews)`" class="mb-4 font-semibold text-yellow-500" ></p>
                     <button @click="addToCart(selectedProduct)" class="px-4 py-2 bg-blue-500 text-white rounded mr-2">Add to Cart</button>
                     <button @click="closeModal" class="px-4 py-2 bg-red-500 text-white rounded">Close</button>
                 </div>
